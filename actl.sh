@@ -10,18 +10,18 @@ export ID=$(date +%s)
 
 for f in cmds dev paths vars env run sexpect; do eval "$(command cat $(pwd)/bash/$f.sh)"; done
 
-a(){
-  cmd="$abduco -l| grep sess-1|tr -s ' ' | sed 's/[[:space:]]/ /g' |tr -s ' '|sed 's/^[[:space:]]//g'"
-  eval "$cmd"
+a() {
+	cmd="$abduco -l| grep sess-1|tr -s ' ' | sed 's/[[:space:]]/ /g' |tr -s ' '|sed 's/^[[:space:]]//g'"
+	eval "$cmd"
 }
 
-pids(){
-  cmd="a|cut -d' ' -f4|sort -u"
-  eval "$cmd"
+pids() {
+	cmd="a|cut -d' ' -f4|sort -u"
+	eval "$cmd"
 }
 
-ps(){
-  pids|while read -r pid; do eval "echo -n $pid\ && pstree -n $pid"; done
+ps() {
+	pids | while read -r pid; do eval "echo -n $pid\ && pstree -n $pid"; done
 }
 
 ls() {
