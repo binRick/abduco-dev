@@ -1,4 +1,4 @@
-package abduco
+package abducoctl
 
 import "github.com/prometheus/procfs"
 

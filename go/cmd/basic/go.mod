@@ -2,8 +2,6 @@ module basic
 
 go 1.17
 
-replace local.dev/abduco => ./../../abduco/.
-
 require (
 	github.com/k0kubun/pp v3.0.1+incompatible
 	local.dev/abduco v0.0.0-00010101000000-000000000000
