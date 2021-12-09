@@ -4,20 +4,28 @@ import (
 	"bufio"
 	"fmt"
 	"os/exec"
+	"reflect"
 	"strconv"
 	"strings"
 	"unicode"
+
+	gops "github.com/mitchellh/go-ps"
 )
 
 type AbducoSession struct {
-	PID     int32
-	Session string
-	Started string
+	PPID        int
+	PID         int
+	PIDs        []int
+	Threads     int
+	Session     string
+	Executable  string
+	Executables []string
+	Started     string
 }
 
 func NewAbducoSession(pid interface{}, session, started string) AbducoSession {
 	return AbducoSession{
-		PID:     pid.(int32),
+		PID:     pid.(int),
 		Session: string(session),
 		Started: string(started),
 	}
@@ -69,10 +77,32 @@ func List() ([]AbducoSession, error) {
 				if err != nil {
 					panic(err)
 				}
+				p, err := gops.FindProcess(int(pid_int))
+				if err != nil {
+					panic(err)
+				}
+				P, err := getRelevantProcs(int(pid_int))
+				pids := []int{}
+				threads := 0
+				executables := []string{}
+				for _, _p := range P {
+					pids = append(pids, _p.PID)
+					executables = append(executables, _p.Comm)
+					threads += _p.NumThreads
+				}
+				if err == nil {
+
+				}
+				//				pp.Println(p, P)
 				ass = append(ass, AbducoSession{
-					PID:     int32(pid_int),
-					Session: string(cl[4]),
-					Started: string(fmt.Sprintf(`%s %s`, cl[1], cl[2])),
+					PID:         int(pid_int),
+					PPID:        int(p.PPid()),
+					PIDs:        pids,
+					Threads:     threads,
+					Executables: executables,
+					Executable:  p.Executable(),
+					Session:     string(cl[4]),
+					Started:     string(fmt.Sprintf(`%s %s`, cl[1], cl[2])),
 				})
 			} else {
 				if spl[0] == `Active` {
@@ -86,4 +116,19 @@ func List() ([]AbducoSession, error) {
 	<-done
 	_ = cmd.Wait()
 	return ass, nil
+}
+
+func ReverseSlice(s interface{}) {
+	size := reflect.ValueOf(s).Len()
+	swap := reflect.Swapper(s)
+	for i, j := 0, size-1; i < j; i, j = i+1, j-1 {
+		swap(i, j)
+	}
+}
+
+func reverseInts(input []int) []int {
+	if len(input) == 0 {
+		return input
+	}
+	return append(reverseInts(input[1:]), input[0])
 }
