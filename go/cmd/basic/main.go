@@ -1,15 +1,18 @@
 package main
 
 import (
+	"encoding/json"
 	"fmt"
 	"os"
 
 	abducoctl "github.com/binRick/abduco-dev/go/abducoctl"
-	"github.com/k0kubun/pp"
 )
 
 func main() {
-	fmt.Println("vim-go")
 	l, _ := abducoctl.List()
-	fmt.Fprintf(os.Stderr, "%s\n", pp.Sprintf("%s", l))
+	dat, err := json.Marshal(l)
+	if err != nil {
+		panic(err)
+	}
+	fmt.Fprintf(os.Stdout, "%s\n", string(dat))
 }

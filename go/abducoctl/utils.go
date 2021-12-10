@@ -3,24 +3,22 @@ package abducoctl
 import (
 	"bufio"
 	"fmt"
+	"os"
 	"os/exec"
 	"reflect"
 	"strconv"
 	"strings"
 	"unicode"
 
+	"github.com/k0kubun/pp"
 	gops "github.com/mitchellh/go-ps"
+
+	//ps "github.com/shirou/gopsutil/v3"
+	ps "github.com/shirou/gopsutil/v3/process"
 )
 
-type AbducoSession struct {
-	PPID        int
-	PID         int
-	PIDs        []int
-	Threads     int
-	Session     string
-	Executable  string
-	Executables []string
-	Started     string
+type AbducoSessions struct {
+	Sessions []AbducoSession
 }
 
 func NewAbducoSession(pid interface{}, session, started string) AbducoSession {
@@ -42,10 +40,6 @@ func TabToSpace(input string) string {
 		}
 	}
 	return strings.Join(result, "")
-}
-
-type AbducoSessions struct {
-	Sessions []AbducoSession
 }
 
 func List() ([]AbducoSession, error) {
@@ -82,28 +76,55 @@ func List() ([]AbducoSession, error) {
 					panic(err)
 				}
 				P, err := getRelevantProcs(int(pid_int))
-				pids := []int{}
-				threads := 0
-				executables := []string{}
-				for _, _p := range P {
-					pids = append(pids, _p.PID)
-					executables = append(executables, _p.Comm)
-					threads += _p.NumThreads
-				}
 				if err == nil {
+					pids := []int{}
+					threads := 0
+					executables := []string{}
+					for _, _p := range P {
+						pids = append(pids, _p.PID)
+						executables = append(executables, _p.Comm)
+						threads += _p.NumThreads
+					}
 
+					proc, err := ps.NewProcess(int32(pid_int))
+					if err != nil {
+						panic(err)
+					}
+					//				pp.Println(p, P)
+					pp.Fprintf(os.Stderr, "%s", proc)
+					ct, _ := proc.CreateTime()
+					mp, _ := proc.MemoryPercent()
+					cp, _ := proc.CPUPercent()
+					cl, _ := proc.Cmdline()
+					cwd, _ := proc.Cwd()
+					st, _ := proc.Status()
+					term, _ := proc.Terminal()
+					conns, _ := proc.Connections()
+					env, _ := proc.Environ()
+					un, _ := proc.Username()
+					of, _ := proc.OpenFiles()
+					ass = append(ass, AbducoSession{
+						PID:            int(pid_int),
+						PPID:           int(p.PPid()),
+						PIDs:           pids,
+						Threads:        threads,
+						CreateTime:     ct,
+						Executables:    executables,
+						Cmdline:        cl,
+						Executable:     p.Executable(),
+						MemoryPercent:  mp,
+						CPUPercent:     cp,
+						Cwd:            cwd,
+						Terminal:       term,
+						Status:         st,
+						Username:       un,
+						Environ:        env,
+						OpenFilesQty:   int32(len(of)),
+						ConnectionsQty: int32(len(conns)),
+						Session:        string(cl[4]),
+						Started:        string(fmt.Sprintf(`%s %s`, cl[1], cl[2])),
+					})
 				}
-				//				pp.Println(p, P)
-				ass = append(ass, AbducoSession{
-					PID:         int(pid_int),
-					PPID:        int(p.PPid()),
-					PIDs:        pids,
-					Threads:     threads,
-					Executables: executables,
-					Executable:  p.Executable(),
-					Session:     string(cl[4]),
-					Started:     string(fmt.Sprintf(`%s %s`, cl[1], cl[2])),
-				})
 			} else {
 				if spl[0] == `Active` {
 					on_active = true
@@ -116,6 +137,28 @@ func List() ([]AbducoSession, error) {
 	<-done
 	_ = cmd.Wait()
 	return ass, nil
+}
+
+type AbducoSession struct {
+	PPID           int
+	PID            int
+	PIDs           []int
+	Threads        int
+	Session        string
+	Executable     string
+	Executables    []string
+	Environ        []string
+	Started        string
+	Username       string
+	Cmdline        string
+	Cwd            string
+	Status         []string
+	ConnectionsQty int32
+	OpenFilesQty   int32
+	Terminal       string
+	CreateTime     int64
+	CPUPercent     float64
+	MemoryPercent  float32
 }
 
 func ReverseSlice(s interface{}) {
