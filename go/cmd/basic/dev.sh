@@ -1,1 +1,1 @@
-nodemon -w ../../. -w . -e go --delay .x -x sh -- -c './test.sh||true'
+nodemon -w ../../. -w . -e go --delay .x -x sh -- -c './run.sh||true'

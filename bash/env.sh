@@ -1,4 +1,3 @@
 export TIMEOUT=300
 export INTERVAL=1
-
 export ABDUCO_PROCESS=${ABDUCO_PROCESS:-$$}

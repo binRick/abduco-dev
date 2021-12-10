@@ -34,7 +34,12 @@ latest() {
 }
 
 kill() {
-	killall abduco
+	(
+		set +e
+		killall abduco
+		killall sexpect
+		killall dvtm
+	) 2>/dev/null
 }
 
 eval "$MODE"

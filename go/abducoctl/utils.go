@@ -42,9 +42,22 @@ func TabToSpace(input string) string {
 	return strings.Join(result, "")
 }
 
+var DEBUG_MODE = false
+
+func GetPids() ([]int, error) {
+	pids := []int{}
+
+	return pids, nil
+}
+
+func get_cmd() *exec.Cmd {
+	c := exec.Command("env", "abduco", "-l")
+	return c
+}
+
 func List() ([]AbducoSession, error) {
 	var ass []AbducoSession
-	cmd := exec.Command("env", "abduco", "-l")
+	cmd := get_cmd()
 	r, _ := cmd.StdoutPipe()
 	cmd.Stderr = cmd.Stdout
 	done := make(chan struct{})
@@ -67,7 +80,14 @@ func List() ([]AbducoSession, error) {
 						cl = append(cl, c)
 					}
 				}
-				pid_int, err := strconv.ParseInt(cl[3], 10, 32)
+				if DEBUG_MODE {
+					pp.Fprintf(os.Stderr, "CL: %s\n", cl)
+				}
+				//os.Exit(1)
+				if len(cl) != 5 {
+					continue
+				}
+				pid_int, err := strconv.ParseInt(cl[len(cl)-2], 10, 32)
 				if err != nil {
 					panic(err)
 				}
@@ -91,37 +111,40 @@ func List() ([]AbducoSession, error) {
 						panic(err)
 					}
 					//				pp.Println(p, P)
-					pp.Fprintf(os.Stderr, "%s", proc)
+					//pp.Fprintf(os.Stderr, "%s", proc)
+					if DEBUG_MODE {
+						pp.Fprintf(os.Stderr, "C:    %s\n", cl)
+					}
 					ct, _ := proc.CreateTime()
 					mp, _ := proc.MemoryPercent()
 					cp, _ := proc.CPUPercent()
-					cl, _ := proc.Cmdline()
+					cmdl, _ := proc.Cmdline()
 					cwd, _ := proc.Cwd()
 					st, _ := proc.Status()
 					term, _ := proc.Terminal()
 					conns, _ := proc.Connections()
-					env, _ := proc.Environ()
+					//					env, _ := proc.Environ()
 					un, _ := proc.Username()
 					of, _ := proc.OpenFiles()
 					ass = append(ass, AbducoSession{
-						PID:            int(pid_int),
-						PPID:           int(p.PPid()),
-						PIDs:           pids,
-						Threads:        threads,
-						CreateTime:     ct,
-						Executables:    executables,
-						Cmdline:        cl,
-						Executable:     p.Executable(),
-						MemoryPercent:  mp,
-						CPUPercent:     cp,
-						Cwd:            cwd,
-						Terminal:       term,
-						Status:         st,
-						Username:       un,
-						Environ:        env,
+						PID:           int(pid_int),
+						PPID:          int(p.PPid()),
+						PIDs:          pids,
+						Threads:       threads,
+						CreateTime:    ct,
+						Executables:   executables,
+						Cmdline:       cmdl,
+						Executable:    p.Executable(),
+						MemoryPercent: mp,
+						CPUPercent:    cp,
+						Cwd:           cwd,
+						Terminal:      term,
+						Status:        st,
+						Username:      un,
+						//						Environ:        env,
 						OpenFilesQty:   int32(len(of)),
 						ConnectionsQty: int32(len(conns)),
-						Session:        string(cl[4]),
+						Session:        string(cl[len(cl)-1]),
 						Started:        string(fmt.Sprintf(`%s %s`, cl[1], cl[2])),
 					})
 				}
@@ -136,18 +159,21 @@ func List() ([]AbducoSession, error) {
 	_ = cmd.Start()
 	<-done
 	_ = cmd.Wait()
+	if DEBUG_MODE {
+		pp.Fprintf(os.Stderr, "%s\n", ass)
+	}
 	return ass, nil
 }
 
 type AbducoSession struct {
-	PPID           int
-	PID            int
-	PIDs           []int
-	Threads        int
-	Session        string
-	Executable     string
-	Executables    []string
-	Environ        []string
+	PPID        int
+	PID         int
+	PIDs        []int
+	Threads     int
+	Session     string
+	Executable  string
+	Executables []string
+	//	Environ        []string
 	Started        string
 	Username       string
 	Cmdline        string

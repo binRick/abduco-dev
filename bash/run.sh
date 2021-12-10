@@ -1,30 +1,33 @@
 run() {
-	RUN_WHILE_LOGIC="[[ -f '$ACTIVE_FILE' ]]"
-	eval_prefix="env OK123=1111"
+	RUN_WHILE_LOGIC="[[ 1 == 1 ]] || [[ -f '$ACTIVE_FILE' ]]"
 	eval_cmd="eval \"$(
 		cat <<EOF
 \$(echo $(echo $CMD | base64 -w0)|base64 -d)
 EOF
 	)\""
-	export WHILE_CMD="while $RUN_WHILE_LOGIC; do $eval_cmd; sleep $INTERVAL; done"
-	#export ABDUCO_CMD="ls /proc/self/fd/${cp0[1]} || exec ${cp0[1]}>&1; ls /proc/self/fd/${cp1[1]} || exec ${cp1[1]}>&2;
-
-	BASH_CMD="${WHILE_CMD}"
-	ABDUCO_BASH_CMD="env bash --norc --noprofile -i -c '$BASH_CMD'"
-	scmd="$(sexpect_wrap "$ABDUCO_BASH_CMD")"
-	ansi >&2 --cyan --bold "$scmd"
 	#ABDUCO_BASH_CMD="$scmd"
-	PASSH_WRAPPER="passh -L $PASSH_STDOUT_LOG_FILE -l $PASSH_STDIN_LOG_FILE"
-	export ABDUCO_CMD="touch $ACTIVE_FILE && env $PASSH_WRAPPER $ABDUCO_BASH_CMD"
+	export WHILE_CMD="while $RUN_WHILE_LOGIC; do $eval_cmd; sleep $INTERVAL; done"
+	scmd="$(sexpect_wrap "$WHILE_CMD")"
+	ansi >&2 --cyan --bold "$scmd"
+	WHILE_CMD="$scmd"
+	#exit 2
+	#export ABDUCO_CMD="ls /proc/self/fd/${cp0[1]} || exec ${cp0[1]}>&1; ls /proc/self/fd/${cp1[1]} || exec ${cp1[1]}>&2;
+	BASH_CMD="${WHILE_CMD}"
+	eval "$BASH_CMD"
+	exit $?
+
+	ABDUCO_BASH_CMD="$env $bash --norc --noprofile -i +e -c '$BASH_CMD'"
+	PASSH_WRAPPER="$passh -L $PASSH_STDOUT_LOG_FILE -l $PASSH_STDIN_LOG_FILE"
+	export ABDUCO_CMD="$touch $ACTIVE_FILE && $env $PASSH_WRAPPER $ABDUCO_BASH_CMD"
 	#exit
 
 	DVTM_CMD="$dvtm -t \"$DVTM_TITLE\" -c $CMD_SOCK -s $STATUS_SOCK"
 	ABDUCO_CMD_file=$(mktemp)
-	echo -e "#!/usr/bin/env bash\n" >$ABDUCO_CMD_file
+	echo -e "#!$bash\n" >$ABDUCO_CMD_file
 	echo -e "$ABDUCO_CMD" >>$ABDUCO_CMD_file
 	chmod +x $ABDUCO_CMD_file
 	export ABDUCO_CMD="$DVTM_CMD $ABDUCO_CMD_file"
-	cmd="env ABDUCO_CMD='$ABDUCO_CMD' $(command -v abduco) -n sess-$ID"
+	cmd="$env ABDUCO_CMD='$ABDUCO_CMD' $(command -v abduco) -n sess-$ID"
 	ansi >&2 --blue --bold "$ABDUCO_CMD"
 	ansi >&2 --yellow --italic "$cmd"
 
