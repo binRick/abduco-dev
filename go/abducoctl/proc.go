@@ -19,9 +19,7 @@ func getRelevantProcs(ppid int) (map[int]procfs.ProcStat, error) {
 		allProcs, _ := fs.AllProcs()
 		for _, proc := range allProcs {
 			stat, _ := proc.NewStat()
-			//fmt.Printf("Compare %d %d/%d %d/%d\n",stat.PID, stat.PPID, curStat.PID, stat.PGRP, curStat.PGRP)
 			if stat.PPID == curStat.PID {
-				//fmt.Printf("%d\n", proc.PID)
 				if _, ok := procs[stat.PID]; !ok {
 					procs[stat.PID] = stat
 					pending = append(pending, stat.PID)
