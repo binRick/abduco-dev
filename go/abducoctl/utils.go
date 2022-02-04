@@ -18,8 +18,35 @@ import (
 	ps "github.com/shirou/gopsutil/v3/process"
 )
 
+const (
+	ABDUCO_BINARY_NAME = `abduco-sb`
+	DEBUG_MODE         = false
+)
+
 type AbducoSessions struct {
 	Sessions []AbducoSession
+}
+
+type AbducoSession struct {
+	PPID        int
+	PID         int
+	PIDs        []int
+	Threads     int
+	Session     string
+	Executable  string
+	Executables []string
+	//	Environ        []string
+	Started        string
+	Username       string
+	Cmdline        string
+	Cwd            string
+	Status         []string
+	ConnectionsQty int32
+	OpenFilesQty   int32
+	Terminal       string
+	CreateTime     int64
+	CPUPercent     float64
+	MemoryPercent  float32
 }
 
 func NewAbducoSession(pid interface{}, session, started string) AbducoSession {
@@ -31,7 +58,7 @@ func NewAbducoSession(pid interface{}, session, started string) AbducoSession {
 }
 
 func Path() string {
-	p, err := exec.LookPath("abduco-sb")
+	p, err := exec.LookPath(ABDUCO_BINARY_NAME)
 	if err != nil {
 		panic(err)
 	}
@@ -50,17 +77,29 @@ func TabToSpace(input string) string {
 	}
 	return strings.Join(result, "")
 }
-
-var DEBUG_MODE = false
-
+func Exists(name string) bool {
+	for _, n := range Names() {
+		if n == name {
+			return true
+		}
+	}
+	return false
+}
+func Names() []string {
+	names := []string{}
+	list, _ := List()
+	for _, s := range list {
+		names = append(names, s.Session)
+	}
+	return names
+}
 func GetPids() ([]int, error) {
 	pids := []int{}
-
 	return pids, nil
 }
 
 func get_cmd() *exec.Cmd {
-	c := exec.Command("env", "abduco-sb", "-l")
+	c := exec.Command("env", ABDUCO_BINARY_NAME, "-l")
 	return c
 }
 
@@ -196,28 +235,6 @@ func List() ([]AbducoSession, error) {
 		pp.Fprintf(os.Stderr, "%s\n", ass)
 	}
 	return ass, nil
-}
-
-type AbducoSession struct {
-	PPID        int
-	PID         int
-	PIDs        []int
-	Threads     int
-	Session     string
-	Executable  string
-	Executables []string
-	//	Environ        []string
-	Started        string
-	Username       string
-	Cmdline        string
-	Cwd            string
-	Status         []string
-	ConnectionsQty int32
-	OpenFilesQty   int32
-	Terminal       string
-	CreateTime     int64
-	CPUPercent     float64
-	MemoryPercent  float32
 }
 
 func ReverseSlice(s interface{}) {

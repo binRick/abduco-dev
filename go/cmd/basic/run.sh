@@ -1,5 +1,6 @@
+#!/bin/sh
 clear >/dev/null 2>&1
 (
-  go run .
+  go run . ${@:-}
 # | jq -Mrc
 ) >&1
