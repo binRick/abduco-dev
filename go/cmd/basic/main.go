@@ -13,4 +13,7 @@ func main() {
 		fmt.Fprintf(os.Stdout, "%s\n", pp.Sprintf(`%s`, abducoctl.PIDs()))
 	}
 	fmt.Fprintf(os.Stdout, "%s\n", fmt.Sprintf("%s", abducoctl.JSON()))
+	fmt.Fprintf(os.Stdout, "%s\n", fmt.Sprintf("%s", abducoctl.Path()))
+	abducoctl.Connect()
+
 }

@@ -30,6 +30,14 @@ func NewAbducoSession(pid interface{}, session, started string) AbducoSession {
 	}
 }
 
+func Path() string {
+	p, err := exec.LookPath("abduco-sb")
+	if err != nil {
+		panic(err)
+	}
+	return p
+}
+
 func TabToSpace(input string) string {
 	var result []string
 	for _, i := range input {

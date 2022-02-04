@@ -3,10 +3,12 @@ module abducoctl
 go 1.17
 
 require (
+	github.com/creack/pty v1.1.17
 	github.com/k0kubun/pp v3.0.1+incompatible
 	github.com/mitchellh/go-ps v1.0.0
 	github.com/prometheus/procfs v0.7.3
 	github.com/shirou/gopsutil/v3 v3.21.11
+	golang.org/x/term v0.0.0-20210927222741-03fcf44c2211
 )
 
 require (
