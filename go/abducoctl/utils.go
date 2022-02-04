@@ -2,6 +2,7 @@ package abducoctl
 
 import (
 	"bufio"
+	"encoding/json"
 	"fmt"
 	"os"
 	"os/exec"
@@ -53,6 +54,30 @@ func GetPids() ([]int, error) {
 func get_cmd() *exec.Cmd {
 	c := exec.Command("env", "abduco-sb", "-l")
 	return c
+}
+
+func PIDs() string {
+	pids, e := GetPids()
+	if e != nil {
+		panic(e)
+	}
+	s := []string{}
+	for p, _ := range pids {
+		s = append(s, fmt.Sprintf(`%d`, p))
+	}
+	return strings.Join(s, "\n")
+}
+
+func JSON() string {
+	l, e := List()
+	if e != nil {
+		panic(e)
+	}
+	dat, err := json.Marshal(l)
+	if err != nil {
+		panic(err)
+	}
+	return fmt.Sprintf("%s", string(dat))
 }
 
 func List() ([]AbducoSession, error) {

@@ -1,18 +1,16 @@
 package main
 
 import (
-	"encoding/json"
 	"fmt"
 	"os"
 
 	abducoctl "github.com/binRick/abduco-dev/go/abducoctl"
+	"github.com/k0kubun/pp"
 )
 
 func main() {
-	l, _ := abducoctl.List()
-	dat, err := json.Marshal(l)
-	if err != nil {
-		panic(err)
+	if false {
+		fmt.Fprintf(os.Stdout, "%s\n", pp.Sprintf(`%s`, abducoctl.PIDs()))
 	}
-	fmt.Fprintf(os.Stdout, "%s\n", string(dat))
+	fmt.Fprintf(os.Stdout, "%s\n", fmt.Sprintf("%s", abducoctl.JSON()))
 }

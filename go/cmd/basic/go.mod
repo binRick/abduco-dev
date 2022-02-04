@@ -2,11 +2,13 @@ module basic
 
 go 1.17
 
-require github.com/binRick/abduco-dev/go/abducoctl v0.0.0-00010101000000-000000000000
+require (
+	github.com/binRick/abduco-dev/go/abducoctl v0.0.0-00010101000000-000000000000
+	github.com/k0kubun/pp v3.0.1+incompatible
+)
 
 require (
 	github.com/go-ole/go-ole v1.2.6 // indirect
-	github.com/k0kubun/pp v3.0.1+incompatible // indirect
 	github.com/lufia/plan9stats v0.0.0-20211012122336-39d0f177ccd0 // indirect
 	github.com/mattn/go-colorable v0.1.12 // indirect
 	github.com/mattn/go-isatty v0.0.14 // indirect
