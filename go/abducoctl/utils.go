@@ -182,8 +182,6 @@ func List() ([]AbducoSession, error) {
 					if err != nil {
 						panic(err)
 					}
-					//				pp.Println(p, P)
-					//pp.Fprintf(os.Stderr, "%s", proc)
 					if DEBUG_MODE {
 						pp.Fprintf(os.Stderr, "C:    %s\n", cl)
 					}

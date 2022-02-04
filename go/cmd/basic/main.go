@@ -18,10 +18,13 @@ func main() {
 	flag.Parse()
 	if false {
 		fmt.Fprintf(os.Stdout, "%s\n", pp.Sprintf(`%s`, abducoctl.PIDs()))
-		fmt.Fprintf(os.Stdout, "%s\n", fmt.Sprintf("%s", abducoctl.JSON()))
 		fmt.Fprintf(os.Stdout, "%s\n", fmt.Sprintf("%s", abducoctl.Path()))
+		fmt.Fprintf(os.Stdout, "%s\n", pp.Sprintf(`%s`, abducoctl.Names()))
+		abducoctl.Connect(SessionNameString())
+		abducoctl.Connect(SessionNameString())
+		abducoctl.Prompt()
+		fmt.Fprintf(os.Stdout, "%s\n", fmt.Sprintf("%s", abducoctl.JSON()))
 	}
-	fmt.Fprintf(os.Stdout, "%s\n", pp.Sprintf(`%s`, abducoctl.Names()))
-	abducoctl.Connect(SessionNameString())
+	abducoctl.DoPreview()
 
 }

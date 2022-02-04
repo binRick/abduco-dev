@@ -52,10 +52,12 @@ func Connect(session_name string) error {
 	}
 	defer func() {
 		_ = term.Restore(int(os.Stdin.Fd()), oldState)
-		pp.Println(`names:`, Names())
-		pp.Println(`pids:`, PIDs())
-		//list, _ := List()
-		//		pp.Println(`pids:`, list)
+		if false {
+			pp.Println(`names:`, Names())
+			pp.Println(`pids:`, PIDs())
+			//list, _ := List()
+			//		pp.Println(`pids:`, list)
+		}
 		if Exists(session_name) {
 			fmt.Fprintf(os.Stderr, "You can reconnect to this session with %s\n", session_name)
 		}
