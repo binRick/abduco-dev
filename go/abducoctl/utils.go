@@ -51,7 +51,7 @@ func GetPids() ([]int, error) {
 }
 
 func get_cmd() *exec.Cmd {
-	c := exec.Command("env", "abduco", "-l")
+	c := exec.Command("env", "abduco-sb", "-l")
 	return c
 }
 
