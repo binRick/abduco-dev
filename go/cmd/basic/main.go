@@ -1,6 +1,7 @@
 package main
 
 import (
+	"fmt"
 	"os"
 
 	abducoctl "github.com/binRick/abduco-dev/go/abducoctl"
@@ -19,9 +20,12 @@ func main() {
 			Dev()
 		case "b":
 			if len(os.Args) > 2 {
-				abducoctl.Buffer(os.Args[2])
+				lines := abducoctl.Buffer(os.Args[2])
+				for _, l := range lines {
+					fmt.Fprintf(os.Stdout, "%s\n", l)
+				}
 			}
-		case "f":
+		case "find":
 			abducoctl.Finder()
 		case "list":
 			abducoctl.List()

@@ -1,30 +1,44 @@
 package abducoctl
 
 import (
-	"bufio"
+	"bytes"
 	"fmt"
+	"log"
+	"os/exec"
 	"strings"
 )
 
-func Buffer(name string) []byte {
-	cmd := SbList(name)
-	r, _ := cmd.StdoutPipe()
-	//pp.Println(cmd)
-	cmd.Stderr = cmd.Stdout
-	done := make(chan struct{})
-	scanner := bufio.NewScanner(r)
-	lines := []string{}
-	go func() {
-		for scanner.Scan() {
-			line := scanner.Text()
-			lines = append(lines, line)
-		}
-		done <- struct{}{}
-	}()
-	_ = cmd.Start()
-	<-done
-	cmd.Wait()
-	fmt.Println(lines)
+func Buffer(name string) []string {
+	cmd := exec.Command(`./../../abducoctl/get_session_buffer.sh`, name)
+
+	var stdout, stderr bytes.Buffer
+	cmd.Stdout = &stdout
+	cmd.Stderr = &stderr
+	err := cmd.Run()
+	if err != nil {
+		log.Fatalf("cmd.Run() failed with %s\n", err)
+	}
+	outStr, errStr := string(stdout.Bytes()), string(stderr.Bytes())
+	fmt.Printf("out:\n%s\nerr:\n%s\n", outStr, errStr)
+	return strings.Split(outStr, "\n")
+	/*
+
+		r, _ := cmd.StdoutPipe()
+		cmd.Stderr = cmd.Stdout
+		done := make(chan struct{})
+		scanner := bufio.NewScanner(r)
+		lines := []string{}
+		go func() {
+			for scanner.Scan() {
+				line := scanner.Text()
+				lines = append(lines, line)
+			}
+			done <- struct{}{}
+		}()
+		_ = cmd.Start()
+		<-done
+		cmd.Wait()
+		fmt.Println(lines)*/
 	/*
 		select {
 		case <-time.After(100 * time.Millisecond):
@@ -38,5 +52,4 @@ func Buffer(name string) []byte {
 			}
 			log.Print("process finished successfully")
 		}*/
-	return []byte(strings.Join(lines, "\n"))
 }
