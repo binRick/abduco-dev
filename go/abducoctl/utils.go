@@ -14,9 +14,7 @@ import (
 	"github.com/google/uuid"
 	"github.com/k0kubun/pp"
 	gops "github.com/mitchellh/go-ps"
-
 	//ps "github.com/shirou/gopsutil/v3"
-	ps "github.com/shirou/gopsutil/v3/process"
 )
 
 const (
@@ -168,7 +166,6 @@ func List() ([]AbducoSession, error) {
 				if DEBUG_MODE {
 					pp.Fprintf(os.Stderr, "CL: %s\n", cl)
 				}
-				//os.Exit(1)
 				if len(cl) != 5 {
 					continue
 				}
@@ -176,61 +173,71 @@ func List() ([]AbducoSession, error) {
 				if err != nil {
 					panic(err)
 				}
-				p, err := gops.FindProcess(int(pid_int))
-				if err != nil {
-					panic(err)
-				}
-				P, err := getRelevantProcs(int(pid_int))
-				if err == nil {
-					pids := []int{}
-					threads := 0
-					executables := []string{}
-					for _, _p := range P {
-						pids = append(pids, _p.PID)
-						executables = append(executables, _p.Comm)
-						threads += _p.NumThreads
-					}
-
-					proc, err := ps.NewProcess(int32(pid_int))
+				p, _ := gops.FindProcess(int(pid_int))
+				ass = append(ass, AbducoSession{
+					PID:     int(pid_int),
+					PPID:    int(p.PPid()),
+					Session: string(cl[len(cl)-1]),
+					Started: string(fmt.Sprintf(`%s %s`, cl[1], cl[2])),
+				})
+				continue
+				//			os.Exit(1)
+				/*
+					p, err := gops.FindProcess(int(pid_int))
 					if err != nil {
 						panic(err)
 					}
-					if DEBUG_MODE {
-						pp.Fprintf(os.Stderr, "C:    %s\n", cl)
-					}
-					ct, _ := proc.CreateTime()
-					mp, _ := proc.MemoryPercent()
-					cp, _ := proc.CPUPercent()
-					cmdl, _ := proc.Cmdline()
-					cwd, _ := proc.Cwd()
-					st, _ := proc.Status()
-					term, _ := proc.Terminal()
-					conns, _ := proc.Connections()
-					//					env, _ := proc.Environ()
-					un, _ := proc.Username()
-					of, _ := proc.OpenFiles()
-					ass = append(ass, AbducoSession{
-						PID:           int(pid_int),
-						PPID:          int(p.PPid()),
-						PIDs:          pids,
-						Threads:       threads,
-						CreateTime:    ct,
-						Executables:   executables,
-						Cmdline:       cmdl,
-						Executable:    p.Executable(),
-						MemoryPercent: mp,
-						CPUPercent:    cp,
-						Cwd:           cwd,
-						Terminal:      term,
-						Status:        st,
-						Username:      un,
-						//						Environ:        env,
-						OpenFilesQty:   int32(len(of)),
-						ConnectionsQty: int32(len(conns)),
-						Session:        string(cl[len(cl)-1]),
-						Started:        string(fmt.Sprintf(`%s %s`, cl[1], cl[2])),
-					})
-				}
+					P, err := getRelevantProcs(int(pid_int))
+					if err == nil {
+						pids := []int{}
+						threads := 0
+						executables := []string{}
+						for _, _p := range P {
+							pids = append(pids, _p.PID)
+							executables = append(executables, _p.Comm)
+							threads += _p.NumThreads
+						}
+
+						proc, err := ps.NewProcess(int32(pid_int))
+						if err != nil {
+							panic(err)
+						}
+						if DEBUG_MODE {
+							pp.Fprintf(os.Stderr, "C:    %s\n", cl)
+						}
+						ct, _ := proc.CreateTime()
+						mp, _ := proc.MemoryPercent()
+						cp, _ := proc.CPUPercent()
+						cmdl, _ := proc.Cmdline()
+						cwd, _ := proc.Cwd()
+						st, _ := proc.Status()
+						term, _ := proc.Terminal()
+						conns, _ := proc.Connections()
+						//					env, _ := proc.Environ()
+						un, _ := proc.Username()
+						of, _ := proc.OpenFiles()
+						ass = append(ass, AbducoSession{
+							PID:           int(pid_int),
+							PPID:          int(p.PPid()),
+							PIDs:          pids,
+							Threads:       threads,
+							CreateTime:    ct,
+							Executables:   executables,
+							Cmdline:       cmdl,
+							Executable:    p.Executable(),
+							MemoryPercent: mp,
+							CPUPercent:    cp,
+							Cwd:           cwd,
+							Terminal:      term,
+							Status:        st,
+							Username:      un,
+							//						Environ:        env,
+							OpenFilesQty:   int32(len(of)),
+							ConnectionsQty: int32(len(conns)),
+							Session:        string(cl[len(cl)-1]),
+							Started:        string(fmt.Sprintf(`%s %s`, cl[1], cl[2])),
+						})
+					}*/
 			} else {
 				if spl[0] == `Active` {
 					on_active = true
@@ -244,6 +251,9 @@ func List() ([]AbducoSession, error) {
 	_ = cmd.Wait()
 	if DEBUG_MODE {
 		pp.Fprintf(os.Stderr, "%s\n", ass)
+	}
+	for _, s := range ass {
+		fmt.Fprintf(os.Stdout, "%d- %s @%s\n", s.PID, s.Session, s.Started)
 	}
 	return ass, nil
 }
