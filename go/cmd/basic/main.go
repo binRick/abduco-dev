@@ -4,10 +4,8 @@ import (
 	"fmt"
 	"os"
 	"runtime"
-	"time"
 
 	abducoctl "github.com/binRick/abduco-dev/go/abducoctl"
-	lp "github.com/tejasmanohar/go-libproc"
 )
 
 var (
@@ -17,8 +15,8 @@ var (
 func main() {
 	if len(os.Args) > 1 {
 		switch os.Args[1] {
-		case "b":
-			abducoctl.Buffer()
+//		case "b":
+//			abducoctl.Buffer()
 		case "list":
 			abducoctl.List()
 		case "select":
@@ -26,18 +24,7 @@ func main() {
 		case "ps":
 			os := runtime.GOOS
 			switch os {
-			case "darwin":
-				if false {
-					fmt.Println("MAC operating system")
-					pids, e := lp.ListAllPids(0)
-					if e != nil {
-						panic(e)
-					}
-					for _, p := range pids {
-						fmt.Println(p)
-					}
-					time.Sleep(10 * time.Second)
-				}
+			//			case "darwin":
 			case "linux":
 				if false {
 					abducoctl.Ps()
