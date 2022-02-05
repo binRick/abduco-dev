@@ -26,13 +26,18 @@ func Finder() {
 				panic(err)
 			}
 			return fmt.Sprintf(`Session: %s (%d)
+Username: %s
 Started: %s (%s ago)
+Processes: %d
+Threads: %d
 ---
 %s
 `,
-				sessions[i].Session,
-				sessions[i].PID,
+				sessions[i].Session, sessions[i].PID,
+				sessions[i].Username,
 				sessions[i].Started, sessions[i].Duration,
+				len(sessions[i].PIDs),
+				sessions[i].Threads,
 				sess_c,
 			)
 		}))
