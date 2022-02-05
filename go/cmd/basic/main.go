@@ -15,15 +15,10 @@ var (
 func main() {
 	if len(os.Args) > 1 {
 		switch os.Args[1] {
-<<<<<<< HEAD
 		case "f":
 			abducoctl.Finder()
-			//		case "b":
-			//			abducoctl.Buffer()
-=======
 		//		case "b":
 		//			abducoctl.Buffer()
->>>>>>> 1cb6659206804123d079d832dd5d6d6a7514ed41
 		case "list":
 			abducoctl.List()
 		case "select":
