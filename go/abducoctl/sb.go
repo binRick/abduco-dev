@@ -3,10 +3,11 @@ package abducoctl
 import (
 	"bufio"
 	"fmt"
+	"strings"
 )
 
-func Buffer() []byte {
-	cmd := SbList(`a2`)
+func Buffer(name string) []byte {
+	cmd := SbList(name)
 	r, _ := cmd.StdoutPipe()
 	//pp.Println(cmd)
 	cmd.Stderr = cmd.Stdout
@@ -37,5 +38,5 @@ func Buffer() []byte {
 			}
 			log.Print("process finished successfully")
 		}*/
-	return []byte(`xx`)
+	return []byte(strings.Join(lines, "\n"))
 }

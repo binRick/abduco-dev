@@ -16,7 +16,7 @@ func Term(ctx context.Context) {
 		if len(abducoctl.Names()) < 1 {
 			abducoctl.Connect(ctx, abducoctl.NewNameString())
 		} else {
-			abducoctl.Prompt()
+			abducoctl.Select()
 			func() {
 				t, err := term.Open("/dev/tty")
 				if err != nil {

@@ -29,7 +29,7 @@ func Kill(ctx context.Context, session_name string) error {
 	return nil
 }
 func SbList(n string) *exec.Cmd {
-	c := exec.Command(Path(), `-r`, `-a`, n)
+	c := exec.Command(Path(), `-r`, `-b`, n)
 	return c
 }
 func Connect(ctx context.Context, session_name string) error {

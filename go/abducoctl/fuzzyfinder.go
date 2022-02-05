@@ -18,10 +18,16 @@ func Finder() {
 			if i == -1 {
 				return ""
 			}
-			return fmt.Sprintf("Session: %s (%d)\nStarted: %s",
+			return fmt.Sprintf(`Session: %s (%d)
+Started: %s
+Buffer: 
+%s
+`,
 				sessions[i].Session,
 				sessions[i].PID,
-				sessions[i].Started)
+				sessions[i].Started,
+				`xxxxxxxxxxxxxxxxxxxxxxxxxxxxx`,
+			)
 		}))
 	if err != nil {
 		log.Fatal(err)

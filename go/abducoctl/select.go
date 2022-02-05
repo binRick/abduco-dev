@@ -17,7 +17,7 @@ func getQuestions() []*survey.Question {
 	}
 }
 
-func Prompt() {
+func Select() {
 	answers := struct {
 		Session string
 	}{}

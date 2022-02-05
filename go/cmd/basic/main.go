@@ -13,14 +13,20 @@ var (
 func main() {
 	if len(os.Args) > 1 {
 		switch os.Args[1] {
+		case "k":
+			Keys()
+		case "dev":
+			Dev()
+		case "b":
+			if len(os.Args) > 2 {
+				abducoctl.Buffer(os.Args[2])
+			}
 		case "f":
 			abducoctl.Finder()
-		//		case "b":
-		//			abducoctl.Buffer()
 		case "list":
 			abducoctl.List()
 		case "select":
-			abducoctl.Prompt()
+			abducoctl.Select()
 		case "ps":
 			abducoctl.Ps()
 		case "connect":
