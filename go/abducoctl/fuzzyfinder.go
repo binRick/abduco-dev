@@ -3,15 +3,15 @@ package abducoctl
 import (
 	"fmt"
 	"log"
-	"strings"
 
-	fuzzyfinder "github.com/ktr0731/go-fuzzyfinder"
+	pp "github.com/k0kubun/pp"
 	"github.com/leaanthony/go-ansi-parser"
+	fuzzyfinder "local.dev/go-fuzzyfinder"
 )
 
 func Finder() {
 	sessions, _ := List()
-	idx, err := fuzzyfinder.FindMulti(
+	idx, err := fuzzyfinder.Find(
 		sessions,
 		func(i int) string {
 			return sessions[i].Session
@@ -20,31 +20,26 @@ func Finder() {
 			if i == -1 {
 				return ""
 			}
-			buf := strings.Join(PlainBuffer(sessions[i].Session), "\n")
-			text, err := ansi.Cleanse("\u001b[1;31;40mHello World\033[0m")
+			sess := pp.Sprintf(`%s`, sessions[i])
+			sess_c, err := ansi.Cleanse(sess)
 			if err != nil {
 				panic(err)
 			}
-
 			return fmt.Sprintf(`Session: %s (%d)
-Started: %s
-Buffer: 
----
-%s
+Started: %s (%s ago)
 ---
 %s
 `,
 				sessions[i].Session,
 				sessions[i].PID,
-				sessions[i].Started,
-				buf,
-				text,
+				sessions[i].Started, sessions[i].Duration,
+				sess_c,
 			)
 		}))
 	if err != nil {
 		log.Fatal(err)
 	}
-	if Exists(sessions[idx[0]].Session) {
-		Connect(ctx, sessions[idx[0]].Session)
+	if Exists(sessions[idx].Session) {
+		Connect(ctx, sessions[idx].Session)
 	}
 }

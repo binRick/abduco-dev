@@ -9,12 +9,14 @@ import (
 	"reflect"
 	"strconv"
 	"strings"
+	"time"
 	"unicode"
 
+	"github.com/araddon/dateparse"
 	"github.com/google/uuid"
 	"github.com/k0kubun/pp"
 	gops "github.com/mitchellh/go-ps"
-	//ps "github.com/shirou/gopsutil/v3"
+	ps "github.com/shirou/gopsutil/v3/process"
 )
 
 const (
@@ -35,17 +37,21 @@ type AbducoSession struct {
 	Executable  string
 	Executables []string
 	//	Environ        []string
-	Started        string
-	Username       string
-	Cmdline        string
-	Cwd            string
-	Status         []string
-	ConnectionsQty int32
-	OpenFilesQty   int32
-	Terminal       string
-	CreateTime     int64
-	CPUPercent     float64
-	MemoryPercent  float32
+	Started          string
+	StartedTime      time.Time
+	StartedAgo       int64
+	StartedTimestamp int64
+	Duration         time.Duration
+	Username         string
+	Cmdline          string
+	Cwd              string
+	Status           []string
+	ConnectionsQty   int32
+	OpenFilesQty     int32
+	Terminal         string
+	CreateTime       int64
+	CPUPercent       float64
+	MemoryPercent    float32
 }
 
 func NewAbducoSession(pid interface{}, session, started string) AbducoSession {
@@ -173,13 +179,39 @@ func List() ([]AbducoSession, error) {
 				if err != nil {
 					panic(err)
 				}
-				p, _ := gops.FindProcess(int(pid_int))
-				ass = append(ass, AbducoSession{
-					PID:     int(pid_int),
-					PPID:    int(p.PPid()),
-					Session: string(cl[len(cl)-1]),
-					Started: string(fmt.Sprintf(`%s %s`, cl[1], cl[2])),
-				})
+				proc, err := ps.NewProcess(int32(pid_int))
+				if err != nil {
+					panic(err)
+				}
+
+				p, err := gops.FindProcess(int(pid_int))
+				if err != nil {
+					panic(err)
+				}
+				pp.Fprintf(os.Stderr, "%s\n", p)
+				pp.Fprintf(os.Stderr, "%s\n", proc)
+				cmdl, _ := proc.Cmdline()
+				cwd, _ := proc.Cwd()
+				st, _ := proc.Status()
+				as := AbducoSession{
+					PID:        int(pid_int),
+					PPID:       int(p.PPid()),
+					Session:    string(cl[len(cl)-1]),
+					Started:    string(fmt.Sprintf(`%s %s`, cl[1], cl[2])),
+					Executable: p.Executable(),
+					Cmdline:    cmdl,
+					Cwd:        cwd,
+					Status:     st,
+				}
+				tm, e := dateparse.ParseLocal(as.Started)
+				if e != nil {
+					panic(e)
+				}
+				as.StartedTime = tm
+				as.StartedTimestamp = tm.Unix()
+				as.StartedAgo = time.Now().Unix() - as.StartedTimestamp
+				as.Duration = time.Since(as.StartedTime)
+				ass = append(ass, as)
 				continue
 				//			os.Exit(1)
 				/*
