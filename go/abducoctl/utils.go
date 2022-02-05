@@ -256,7 +256,7 @@ func List() ([]AbducoSession, error) {
 		if DEBUG_MODE {
 			fmt.Fprintf(os.Stdout, "%s <%d> %s\n", s.Started, s.PID, s.Session)
 		}
-		fmt.Fprintf(os.Stderr, "%s <%d> %s\n", s.Started, s.PID, s.Session)
+		//fmt.Fprintf(os.Stderr, "%s <%d> %s\n", s.Started, s.PID, s.Session)
 	}
 	return ass, nil
 }
