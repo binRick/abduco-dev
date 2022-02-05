@@ -23,6 +23,6 @@ func Prompt() {
 	}{}
 	survey.Ask(getQuestions(), &answers)
 	if Exists(answers.Session) {
-		Connect(answers.Session)
+		Connect(ctx, answers.Session)
 	}
 }

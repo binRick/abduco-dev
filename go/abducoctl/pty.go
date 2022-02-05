@@ -1,6 +1,7 @@
 package abducoctl
 
 import (
+	"context"
 	"fmt"
 	"io"
 	"log"
@@ -21,7 +22,13 @@ var (
 	CMD                 = `/usr/bin/env bash -i`
 )
 
-func Connect(session_name string) error {
+func Eval(ctx context.Context, cmd []string) error {
+	return nil
+}
+func Kill(ctx context.Context, session_name string) error {
+	return nil
+}
+func Connect(ctx context.Context, session_name string) error {
 	c := exec.Command(Path(), `-L`, fmt.Sprintf(`%d`, SCROLL_BUFFER_LINES), `-A`, session_name)
 	c.Env = os.Environ()
 	c.Env = append(c.Env, fmt.Sprintf("%s=%s", CMD_KEY, CMD))
@@ -59,7 +66,7 @@ func Connect(session_name string) error {
 			//		pp.Println(`pids:`, list)
 		}
 		if Exists(session_name) {
-			fmt.Fprintf(os.Stderr, "You can reconnect to this session with %s\n", session_name)
+			fmt.Fprintf(os.Stderr, "\n\nYou can reconnect to this session with %s\n", session_name)
 		}
 	}()
 	go func() { _, _ = io.Copy(ptmx, os.Stdin) }()

@@ -1,4 +1,4 @@
-package abducoctl
+package main
 
 import (
 	"context"
@@ -22,9 +22,14 @@ func cancelContext() context.Context {
 	signal.Notify(s, syscall.SIGTERM, syscall.SIGINT)
 	go func() {
 		<-s
-		fmt.Fprintf(os.Stderr, "\n\nmodule cancelContext>\n\n")
+		if false {
+			fmt.Fprintf(os.Stderr, "\n\ncancelContext> TRIGGER\n\n\n")
+		}
 		cancel()
 	}()
+	if false {
+		fmt.Fprintf(os.Stderr, "\n\ncancelContext> client INIT\n\n")
+	}
 	return ctx
 
 }

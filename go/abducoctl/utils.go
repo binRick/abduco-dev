@@ -112,6 +112,10 @@ func get_cmd() *exec.Cmd {
 	return c
 }
 
+func Ps() {
+	fmt.Fprintf(os.Stdout, "%s\n", strings.Join(Names(),"\n"))
+}
+
 func PIDs() string {
 	pids, e := GetPids()
 	if e != nil {
