@@ -11,6 +11,7 @@ import (
 	"strings"
 	"unicode"
 
+	"github.com/google/uuid"
 	"github.com/k0kubun/pp"
 	gops "github.com/mitchellh/go-ps"
 
@@ -55,6 +56,14 @@ func NewAbducoSession(pid interface{}, session, started string) AbducoSession {
 		Session: string(session),
 		Started: string(started),
 	}
+}
+
+func NewSessionNameString() string {
+	return strings.Split(uuid.NewString(), `-`)[0]
+}
+
+func NewNameString() string {
+	return uuid.NewString()
 }
 
 func Path() string {

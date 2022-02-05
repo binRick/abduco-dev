@@ -1,70 +1,43 @@
-package abducoctl
+package main
 
 import (
 	"fmt"
 	"log"
-	"strings"
 
-	"github.com/k0kubun/pp"
 	fuzzyfinder "github.com/ktr0731/go-fuzzyfinder"
 )
 
-type Preview struct {
+type Track struct {
 	Name      string
 	AlbumName string
 	Artist    string
 }
 
-func Previews() []Preview {
-	p := []Preview{}
-	l, _ := List()
-	for _, i := range l {
-		p = append(p, Preview{
-			Name:      i.Session,
-			Artist:    i.Session,
-			AlbumName: i.Session,
-		})
-	}
-	return p
+var tracks = []Track{
+	{"foo", "album1", "artist1"},
+	{"bar", "album1", "artist1"},
+	{"foo", "album2", "artist1"},
+	{"baz", "album2", "artist2"},
+	{"baz", "album3", "artist2"},
 }
 
-func DoPreview() {
-	p, _ := List()
+func main() {
 	idx, err := fuzzyfinder.FindMulti(
-		p,
+		tracks,
 		func(i int) string {
-			c := `$`
-			if p[i].Username == `root` {
-				c = `#`
-			}
-			s := fmt.Sprintf(`%s@%s <%d> %s %s`,
-				p[i].Username,
-				p[i].Started,
-        p[i].PID,
-				c,
-				strings.Join(p[i].Executables[1:len(p[i].Executables)], ` `),
-			)
-			return s
+			return tracks[i].Name
 		},
 		fuzzyfinder.WithPreviewWindow(func(i, w, h int) string {
 			if i == -1 {
 				return ""
 			}
-			return fmt.Sprintf("Session: %s (%s) | PID %d | User %s",
-				p[i].Session,
-				p[i].PID,
-				p[i].Username)
+			return fmt.Sprintf("Track: %s (%s)\nAlbum: %s",
+				tracks[i].Name,
+				tracks[i].Artist,
+				tracks[i].AlbumName)
 		}))
 	if err != nil {
 		log.Fatal(err)
 	}
-	pp.Printf("selected: %v\n", p[idx[0]])
-	//for _, id := range idx {
-	//		fmt.Println(p[id])
-	//	}
-	/*
-	   if Exists(answers.Session) {
-	       Connect(answers.Session)
-	   }
-	*/
+	fmt.Printf("selected: %v\n", idx)
 }
