@@ -2,24 +2,35 @@ package abducoctl
 
 import (
 	"bytes"
-	"fmt"
-	"log"
 	"os/exec"
 	"strings"
+
+	"github.com/leaanthony/go-ansi-parser"
 )
 
-func Buffer(name string) []string {
-	cmd := exec.Command(`./../../abducoctl/get_session_buffer.sh`, name)
+var (
+	GET_BUFFER_SESSION_SCRIPT = `./../../abducoctl/get_session_buffer.sh`
+)
 
-	var stdout, stderr bytes.Buffer
+func PlainBuffer(n string) []string {
+	s := []string{}
+	for _, l := range Buffer(n) {
+		clean, e := ansi.Cleanse(l)
+		if e == nil {
+			s = append(s, clean)
+		} else {
+			s = append(s, l)
+		}
+	}
+	return s
+}
+
+func Buffer(name string) []string {
+	cmd := exec.Command(GET_BUFFER_SESSION_SCRIPT, name)
+	var stdout bytes.Buffer
 	cmd.Stdout = &stdout
-	cmd.Stderr = &stderr
 	if err := cmd.Run(); err != nil {
-		log.Fatalf("cmd.Run() failed with %s\n", err)
+		panic(err)
 	}
-	outStr, errStr := string(stdout.Bytes()), string(stderr.Bytes())
-	if false {
-		fmt.Printf("out:\n%s\nerr:\n%s\n", outStr, errStr)
-	}
-	return strings.Split(outStr, "\n")
+	return strings.Split(string(stdout.Bytes()), "\n")
 }

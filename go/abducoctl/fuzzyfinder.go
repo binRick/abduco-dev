@@ -3,8 +3,10 @@ package abducoctl
 import (
 	"fmt"
 	"log"
+	"strings"
 
 	fuzzyfinder "github.com/ktr0731/go-fuzzyfinder"
+	"github.com/leaanthony/go-ansi-parser"
 )
 
 func Finder() {
@@ -18,15 +20,25 @@ func Finder() {
 			if i == -1 {
 				return ""
 			}
+			buf := strings.Join(PlainBuffer(sessions[i].Session), "\n")
+			text, err := ansi.Cleanse("\u001b[1;31;40mHello World\033[0m")
+			if err != nil {
+				panic(err)
+			}
+
 			return fmt.Sprintf(`Session: %s (%d)
 Started: %s
 Buffer: 
+---
+%s
+---
 %s
 `,
 				sessions[i].Session,
 				sessions[i].PID,
 				sessions[i].Started,
-				`xxxxxxxxxxxxxxxxxxxxxxxxxxxxx`,
+				buf,
+				text,
 			)
 		}))
 	if err != nil {

@@ -1,6 +1,9 @@
 #!/usr/bin/env bash
 set -eou pipefail
-killall sb 2>/dev/null||true
+{ 
+  killall sb 2>/dev/null||true
+
+} 2>/dev/null
 
 clear >/dev/null 2>&1
 go build -o sb .||{ ./fix.sh && clear && go build -o sb .; }
@@ -9,6 +12,6 @@ go build -o sb .||{ ./fix.sh && clear && go build -o sb .; }
 cu(){
   reset
 }
-trap cu EXIT
+#trap cu EXIT
 
 eval ./sb ${@:-}
