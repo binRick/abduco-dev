@@ -1,4 +1,4 @@
-#!/usr/bin/bash
+#!/usr/bin/env bash
 set -eou pipefail
 killall sb 2>/dev/null||true
 
