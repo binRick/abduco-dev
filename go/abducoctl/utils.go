@@ -203,8 +203,27 @@ func List() ([]AbducoSession, error) {
 				of, _ := proc.OpenFiles()
 				children, _ := proc.Children()
 				pids := []int{}
+				nt, _ := proc.NumThreads()
+				threads_qty := nt
 				for _, child := range children {
 					pids = append(pids, int(child.Pid))
+				}
+
+				for _, cp := range pids {
+					P, e := ps.NewProcess(int32(cp))
+					if e == nil {
+						nt, _ := proc.NumThreads()
+						threads_qty += nt
+
+						PC, e := P.Children()
+						if e == nil {
+							for _, C := range PC {
+								nt, _ := C.NumThreads()
+								threads_qty += nt
+								pids = append(pids, int(C.Pid))
+							}
+						}
+					}
 				}
 				as := AbducoSession{
 					PID:            int(pid_int),
@@ -218,13 +237,12 @@ func List() ([]AbducoSession, error) {
 					Status:         st,
 					OpenFilesQty:   int32(len(of)),
 					ConnectionsQty: int32(len(conns)),
-
-					CreateTime: ct,
-					//Executables:   executables,
-					MemoryPercent: mp,
-					CPUPercent:    cp,
-					Terminal:      term,
-					Username:      un,
+					CreateTime:     ct,
+					MemoryPercent:  mp,
+					CPUPercent:     cp,
+					Terminal:       term,
+					Username:       un,
+					Threads:        int(threads_qty),
 				}
 				tm, e := dateparse.ParseLocal(as.Started)
 				if e != nil {
