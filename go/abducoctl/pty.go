@@ -28,8 +28,13 @@ func Eval(ctx context.Context, cmd []string) error {
 func Kill(ctx context.Context, session_name string) error {
 	return nil
 }
+func SbList(n string) *exec.Cmd {
+	c := exec.Command(Path(), `-r`, `-a`, n)
+	return c
+}
 func Connect(ctx context.Context, session_name string) error {
-	c := exec.Command(Path(), `-L`, fmt.Sprintf(`%d`, SCROLL_BUFFER_LINES), `-A`, session_name)
+	pfx := `/usr/bin/env`
+	c := exec.Command(fmt.Sprintf(`%s`, pfx), Path(), `-L`, fmt.Sprintf(`%d`, SCROLL_BUFFER_LINES), `-A`, session_name)
 	c.Env = os.Environ()
 	c.Env = append(c.Env, fmt.Sprintf("%s=%s", CMD_KEY, CMD))
 	ptmx, err := pty.Start(c)

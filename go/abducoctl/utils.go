@@ -253,7 +253,10 @@ func List() ([]AbducoSession, error) {
 		pp.Fprintf(os.Stderr, "%s\n", ass)
 	}
 	for _, s := range ass {
-		fmt.Fprintf(os.Stdout, "%d- %s @%s\n", s.PID, s.Session, s.Started)
+		if DEBUG_MODE {
+			fmt.Fprintf(os.Stdout, "%s <%d> %s\n", s.Started, s.PID, s.Session)
+		}
+		fmt.Fprintf(os.Stderr, "%s <%d> %s\n", s.Started, s.PID, s.Session)
 	}
 	return ass, nil
 }
