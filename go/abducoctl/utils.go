@@ -190,18 +190,41 @@ func List() ([]AbducoSession, error) {
 				}
 				pp.Fprintf(os.Stderr, "%s\n", p)
 				pp.Fprintf(os.Stderr, "%s\n", proc)
+
+				ct, _ := proc.CreateTime()
+				mp, _ := proc.MemoryPercent()
+				cp, _ := proc.CPUPercent()
 				cmdl, _ := proc.Cmdline()
 				cwd, _ := proc.Cwd()
 				st, _ := proc.Status()
+				term, _ := proc.Terminal()
+				conns, _ := proc.Connections()
+				un, _ := proc.Username()
+				of, _ := proc.OpenFiles()
+				children, _ := proc.Children()
+				pids := []int{}
+				for _, child := range children {
+					pids = append(pids, int(child.Pid))
+				}
 				as := AbducoSession{
-					PID:        int(pid_int),
-					PPID:       int(p.PPid()),
-					Session:    string(cl[len(cl)-1]),
-					Started:    string(fmt.Sprintf(`%s %s`, cl[1], cl[2])),
-					Executable: p.Executable(),
-					Cmdline:    cmdl,
-					Cwd:        cwd,
-					Status:     st,
+					PID:            int(pid_int),
+					PPID:           int(p.PPid()),
+					PIDs:           pids,
+					Session:        string(cl[len(cl)-1]),
+					Started:        string(fmt.Sprintf(`%s %s`, cl[1], cl[2])),
+					Executable:     p.Executable(),
+					Cmdline:        cmdl,
+					Cwd:            cwd,
+					Status:         st,
+					OpenFilesQty:   int32(len(of)),
+					ConnectionsQty: int32(len(conns)),
+
+					CreateTime: ct,
+					//Executables:   executables,
+					MemoryPercent: mp,
+					CPUPercent:    cp,
+					Terminal:      term,
+					Username:      un,
 				}
 				tm, e := dateparse.ParseLocal(as.Started)
 				if e != nil {
