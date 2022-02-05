@@ -15,8 +15,8 @@ var (
 func main() {
 	if len(os.Args) > 1 {
 		switch os.Args[1] {
-//		case "b":
-//			abducoctl.Buffer()
+		//		case "b":
+		//			abducoctl.Buffer()
 		case "list":
 			abducoctl.List()
 		case "select":
