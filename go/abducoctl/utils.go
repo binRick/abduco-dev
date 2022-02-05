@@ -113,7 +113,7 @@ func get_cmd() *exec.Cmd {
 }
 
 func Ps() {
-	fmt.Fprintf(os.Stdout, "%s\n", strings.Join(Names(),"\n"))
+	fmt.Fprintf(os.Stdout, "%s\n", strings.Join(Names(), "\n"))
 }
 
 func PIDs() string {
