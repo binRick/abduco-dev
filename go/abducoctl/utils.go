@@ -188,8 +188,10 @@ func List() ([]AbducoSession, error) {
 				if err != nil {
 					panic(err)
 				}
-				pp.Fprintf(os.Stderr, "%s\n", p)
-				pp.Fprintf(os.Stderr, "%s\n", proc)
+				if false {
+					pp.Fprintf(os.Stderr, "%s\n", p)
+					pp.Fprintf(os.Stderr, "%s\n", proc)
+				}
 
 				ct, _ := proc.CreateTime()
 				mp, _ := proc.MemoryPercent()
@@ -253,64 +255,6 @@ func List() ([]AbducoSession, error) {
 				as.StartedAgo = time.Now().Unix() - as.StartedTimestamp
 				as.Duration = time.Since(as.StartedTime)
 				ass = append(ass, as)
-				continue
-				//			os.Exit(1)
-				/*
-					p, err := gops.FindProcess(int(pid_int))
-					if err != nil {
-						panic(err)
-					}
-					P, err := getRelevantProcs(int(pid_int))
-					if err == nil {
-						pids := []int{}
-						threads := 0
-						executables := []string{}
-						for _, _p := range P {
-							pids = append(pids, _p.PID)
-							executables = append(executables, _p.Comm)
-							threads += _p.NumThreads
-						}
-
-						proc, err := ps.NewProcess(int32(pid_int))
-						if err != nil {
-							panic(err)
-						}
-						if DEBUG_MODE {
-							pp.Fprintf(os.Stderr, "C:    %s\n", cl)
-						}
-						ct, _ := proc.CreateTime()
-						mp, _ := proc.MemoryPercent()
-						cp, _ := proc.CPUPercent()
-						cmdl, _ := proc.Cmdline()
-						cwd, _ := proc.Cwd()
-						st, _ := proc.Status()
-						term, _ := proc.Terminal()
-						conns, _ := proc.Connections()
-						//					env, _ := proc.Environ()
-						un, _ := proc.Username()
-						of, _ := proc.OpenFiles()
-						ass = append(ass, AbducoSession{
-							PID:           int(pid_int),
-							PPID:          int(p.PPid()),
-							PIDs:          pids,
-							Threads:       threads,
-							CreateTime:    ct,
-							Executables:   executables,
-							Cmdline:       cmdl,
-							Executable:    p.Executable(),
-							MemoryPercent: mp,
-							CPUPercent:    cp,
-							Cwd:           cwd,
-							Terminal:      term,
-							Status:        st,
-							Username:      un,
-							//						Environ:        env,
-							OpenFilesQty:   int32(len(of)),
-							ConnectionsQty: int32(len(conns)),
-							Session:        string(cl[len(cl)-1]),
-							Started:        string(fmt.Sprintf(`%s %s`, cl[1], cl[2])),
-						})
-					}*/
 			} else {
 				if spl[0] == `Active` {
 					on_active = true
