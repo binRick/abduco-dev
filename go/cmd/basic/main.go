@@ -14,7 +14,7 @@ var (
 	f36          = abducoctl.RemoteHost{
 		User:    `root`,
 		Host:    `127.0.0.1`,
-		Port:    49117,
+		Port:    22,
 		Timeout: (time.Millisecond * 1000),
 	}
 )
