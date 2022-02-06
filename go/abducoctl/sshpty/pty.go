@@ -1,4 +1,4 @@
-package main
+package sshpty
 
 import (
 	"io"
@@ -6,18 +6,12 @@ import (
 	"net"
 	"time"
 
-	//"syscall"
 	"fmt"
 	"os"
-
-	//"code.google.com/p/go.crypto/ssh"
-
-	//"code.google.com/p/go.crypto/ssh/terminal"
 
 	"golang.org/x/crypto/ssh"
 	"golang.org/x/crypto/ssh/agent"
 	"golang.org/x/crypto/ssh/terminal"
-	//"github.com/fatih/color"
 )
 
 type password string
@@ -73,7 +67,7 @@ func get_ssh_client_config() *ssh.ClientConfig {
 	}
 }
 
-func main() {
+func Pty() {
 	server = fmt.Sprintf(`%s:%s`, server, port)
 	config := get_ssh_client_config()
 	conn, err := ssh.Dial("tcp", server, config)
