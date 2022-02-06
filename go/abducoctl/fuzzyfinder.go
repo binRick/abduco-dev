@@ -4,9 +4,15 @@ import (
 	"fmt"
 	"log"
 
+	at "github.com/mgutz/ansi"
+
 	pp "github.com/k0kubun/pp"
 	"github.com/leaanthony/go-ansi-parser"
 	fuzzyfinder "local.dev/go-fuzzyfinder"
+)
+
+var (
+	phosphorize = at.ColorFunc("green+h:black")
 )
 
 func Finder() {
@@ -25,11 +31,13 @@ func Finder() {
 			if err != nil {
 				panic(err)
 			}
-			return fmt.Sprintf(`Session: %s (%d)
-Username: %s
-Started: %s (%s ago)
-Processes: %d
-Threads: %d
+			return fmt.Sprintf(`
+Session:      %s
+PID:          %d
+Username:     %s
+Started:      %s (%s ago)
+Processes:    %d
+Threads:      %d
 ---
 %s
 `,

@@ -13,6 +13,7 @@ import (
 	"unicode"
 
 	"github.com/araddon/dateparse"
+	"github.com/charmbracelet/lipgloss"
 	"github.com/google/uuid"
 	"github.com/k0kubun/pp"
 	gops "github.com/mitchellh/go-ps"
@@ -143,6 +144,14 @@ func JSON() string {
 	}
 	return fmt.Sprintf("%s", string(dat))
 }
+
+var style = lipgloss.NewStyle().
+	Bold(true).
+	Foreground(lipgloss.Color("#FAFAFA")).
+	Background(lipgloss.Color("#7D56F4")).
+	PaddingTop(2).
+	PaddingLeft(4).
+	Width(22)
 
 func List() ([]AbducoSession, error) {
 	var ass []AbducoSession
