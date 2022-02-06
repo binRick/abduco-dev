@@ -11,7 +11,6 @@ import (
 	"syscall"
 
 	"github.com/creack/pty"
-	"github.com/k0kubun/pp"
 	"golang.org/x/term"
 )
 
@@ -28,10 +27,12 @@ func Eval(ctx context.Context, cmd []string) error {
 func Kill(ctx context.Context, session_name string) error {
 	return nil
 }
+
 func SbList(n string) *exec.Cmd {
 	c := exec.Command(Path(), `-r`, `-b`, n)
 	return c
 }
+
 func Connect(ctx context.Context, session_name string) error {
 	pfx := `/usr/bin/env`
 	c := exec.Command(fmt.Sprintf(`%s`, pfx), Path(), `-L`, fmt.Sprintf(`%d`, SCROLL_BUFFER_LINES), `-A`, session_name)
@@ -64,12 +65,6 @@ func Connect(ctx context.Context, session_name string) error {
 	}
 	defer func() {
 		_ = term.Restore(int(os.Stdin.Fd()), oldState)
-		if false {
-			pp.Println(`names:`, Names())
-			pp.Println(`pids:`, PIDs())
-			//list, _ := List()
-			//		pp.Println(`pids:`, list)
-		}
 		if Exists(session_name) {
 			fmt.Fprintf(os.Stderr, "\n\nYou can reconnect to this session with %s\n", session_name)
 		}
