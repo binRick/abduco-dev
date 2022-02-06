@@ -15,16 +15,19 @@ var (
 		`localhost`: abducoctl.RemoteHost{
 			User:    `rick`,
 			Host:    `127.0.0.1`,
+			Name:    `mac`,
 			Port:    22,
 			Timeout: (time.Millisecond * 1000),
 		},
 		`al1`: abducoctl.RemoteHost{
+			Name:    `al1`,
 			User:    `root`,
 			Host:    `127.0.0.1`,
 			Port:    45888,
 			Timeout: (time.Millisecond * 1000),
 		},
 		`f36`: abducoctl.RemoteHost{
+			Name:    `f36`,
 			User:    `root`,
 			Host:    `127.0.0.1`,
 			Port:    49117,
@@ -36,6 +39,11 @@ var (
 func main() {
 	if len(os.Args) > 1 {
 		switch os.Args[1] {
+		case "normalize":
+			if len(os.Args) > 2 {
+				host := hosts[os.Args[2]]
+				abducoctl.NormalizeRemoteHost(host)
+			}
 		case "k":
 			Keys()
 		case "ssh":
@@ -46,7 +54,10 @@ func main() {
 				pp.Println(host)
 			}
 		case "remote":
-			abducoctl.ListRemoteHostSessions(hosts)
+			if len(os.Args) > 2 {
+				host := hosts[os.Args[2]]
+				abducoctl.ListRemoteHostSessions(host)
+			}
 		case "dev":
 			Dev()
 		case "b":

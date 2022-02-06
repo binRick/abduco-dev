@@ -5,13 +5,15 @@ import (
 	"fmt"
 	"log"
 	"os"
+	"path/filepath"
 	"strconv"
 	"strings"
 	"time"
 
 	pp "github.com/k0kubun/pp"
-	"github.com/melbahja/goph"
+	sftp "github.com/pkg/sftp"
 	"golang.org/x/crypto/ssh"
+	"local.dev/goph"
 )
 
 var (
@@ -21,6 +23,7 @@ var (
 type RemoteHost struct {
 	Host     string
 	Hostname string
+	Name     string
 	Port     uint
 	User     string
 	Timeout  time.Duration
@@ -100,7 +103,7 @@ func NewRemoteCommand(cmd string) string {
 	return fmt.Sprintf(`/usr/bin/env PATH=%s %s`, REMOTE_PATH, cmd)
 }
 
-func SSH(rh RemoteHost, cmd string) string {
+func GetSSHClient(rh RemoteHost) *goph.Client {
 	auth, err := goph.UseAgent()
 	if err != nil {
 		panic(err)
@@ -116,6 +119,76 @@ func SSH(rh RemoteHost, cmd string) string {
 	if err != nil {
 		log.Fatal(err)
 	}
+	return client
+
+}
+func GetSftpClient(client *goph.Client) *sftp.Client {
+	sftp, err := client.NewSftp()
+	if err != nil {
+		panic(err)
+	}
+	return sftp
+}
+
+func SftpPutFileContent(rh RemoteHost, f string, content []byte) {
+	client := GetSSHClient(rh)
+	defer client.Close()
+	sftp := GetSftpClient(client)
+	defer sftp.Close()
+	file, err := sftp.Create(f)
+	if err != nil {
+		panic(err)
+	}
+	file.Write(content)
+	file.Close()
+}
+
+func UploadSB(rh RemoteHost) {
+	SftpPutFile(rh, SRC_SB_PATH, DST_SB_PATH, 0700)
+}
+
+func SftpPutFile(rh RemoteHost, local_file, remote_file string, mode os.FileMode) {
+	lf, err := os.Stat(local_file)
+	if err != nil {
+		panic(err)
+	}
+	client := GetSSHClient(rh)
+	defer client.Close()
+	sftp := GetSftpClient(client)
+	defer sftp.Close()
+	remote_dir := filepath.Dir(remote_file)
+	if rf, err := sftp.Lstat(remote_file); (err != nil) || (rf.Size() != lf.Size()) {
+		if _, lerr := sftp.Lstat(remote_dir); lerr != nil {
+			merr := sftp.Mkdir(remote_dir)
+			if merr != nil {
+				panic(merr)
+			}
+		}
+		err = client.Upload(local_file, remote_file)
+		if err != nil {
+			panic(err)
+		}
+	}
+	fi, err := sftp.Lstat(remote_file)
+	if err != nil {
+		panic(err)
+	}
+	if fi.Mode() != mode {
+		err = sftp.Chmod(remote_file, mode)
+		if err != nil {
+			panic(err)
+		}
+	}
+}
+
+func NormalizeRemoteHost(rh RemoteHost) {
+	//SftpPutFileContent(rh, `/tmp/tt12345`, []byte(`xxxxxxxxxxxxx`))
+	//SftpPutFile(rh, `/tmp/src`, `/tmp/dest`, 0700)
+	UploadSB(rh)
+}
+
+func SSH(rh RemoteHost, cmd string) string {
+	client := GetSSHClient(rh)
 	defer client.Close()
 	ctx, cancel := context.WithTimeout(ctx, rh.Timeout)
 	defer cancel()

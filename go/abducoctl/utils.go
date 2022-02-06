@@ -21,8 +21,7 @@ import (
 )
 
 const (
-	ABDUCO_BINARY_NAME = `abduco-sb`
-	DEBUG_MODE         = false
+	DEBUG_MODE = false
 )
 
 type AbducoSessions struct {

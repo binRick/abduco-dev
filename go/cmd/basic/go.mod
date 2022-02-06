@@ -33,7 +33,6 @@ require (
 	github.com/mattn/go-colorable v0.1.12 // indirect
 	github.com/mattn/go-isatty v0.0.14 // indirect
 	github.com/mattn/go-runewidth v0.0.13 // indirect
-	github.com/melbahja/goph v1.3.0 // indirect
 	github.com/mgutz/ansi v0.0.0-20200706080929-d51e80ef957d // indirect
 	github.com/mitchellh/go-ps v1.0.0 // indirect
 	github.com/muesli/reflow v0.2.1-0.20210115123740-9e1d0d53df68 // indirect
@@ -57,8 +56,11 @@ require (
 	golang.org/x/text v0.3.7 // indirect
 	gopkg.in/yaml.v3 v3.0.0-20210107192922-496545a6307b // indirect
 	local.dev/go-fuzzyfinder v0.0.0-00010101000000-000000000000 // indirect
+	local.dev/goph v0.0.0-00010101000000-000000000000 // indirect
 )
 
 replace github.com/binRick/abduco-dev/go/abducoctl => ./../../abducoctl/.
 
 replace local.dev/go-fuzzyfinder => ./../../abducoctl/go-fuzzyfinder
+
+replace local.dev/goph => ./../../abducoctl/goph
