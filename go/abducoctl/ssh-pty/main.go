@@ -29,9 +29,9 @@ var (
 		ssh.TTY_OP_ISPEED: 14400,
 		ssh.TTY_OP_OSPEED: 14400,
 	}
-	server = `127.0.0.1`
-	port   = 49117
-	user   = "root"
+	server = os.Getenv(`HOST`)
+	port   = os.Getenv(`PORT`)
+	user   = os.Getenv(`USER`)
 )
 
 func PublicKeyFile(file string) (ssh.AuthMethod, error) {
@@ -74,7 +74,7 @@ func get_ssh_client_config() *ssh.ClientConfig {
 }
 
 func main() {
-	server = fmt.Sprintf(`%s:%d`, server, port)
+	server = fmt.Sprintf(`%s:%s`, server, port)
 	config := get_ssh_client_config()
 	conn, err := ssh.Dial("tcp", server, config)
 	if err != nil {
