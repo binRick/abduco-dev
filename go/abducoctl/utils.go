@@ -30,11 +30,13 @@ type AbducoSessions struct {
 }
 
 type AbducoSession struct {
+	Active      bool
 	PPID        int
 	PID         int
 	PIDs        []int
 	Threads     int
 	Session     string
+	Hostname    string
 	Executable  string
 	Executables []string
 	//	Environ        []string

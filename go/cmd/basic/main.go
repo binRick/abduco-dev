@@ -6,6 +6,7 @@ import (
 	"time"
 
 	abducoctl "github.com/binRick/abduco-dev/go/abducoctl"
+	"github.com/k0kubun/pp"
 )
 
 var (
@@ -25,7 +26,9 @@ func main() {
 			Keys()
 		case "ssh":
 			stdout := abducoctl.SSH(f36, `abduco-sb -l`)
-			fmt.Println(stdout)
+			f36.ParseList(stdout)
+			pp.Println(f36)
+			//			fmt.Println(stdout)
 		case "dev":
 			Dev()
 		case "b":
