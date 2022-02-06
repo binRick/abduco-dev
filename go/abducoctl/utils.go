@@ -92,6 +92,7 @@ func TabToSpace(input string) string {
 	}
 	return strings.Join(result, "")
 }
+
 func Exists(name string) bool {
 	for _, n := range Names() {
 		if n == name {
@@ -100,6 +101,7 @@ func Exists(name string) bool {
 	}
 	return false
 }
+
 func Names() []string {
 	names := []string{}
 	list, _ := List()
@@ -108,13 +110,14 @@ func Names() []string {
 	}
 	return names
 }
+
 func GetPids() ([]int, error) {
 	pids := []int{}
 	return pids, nil
 }
 
 func get_cmd() *exec.Cmd {
-	c := exec.Command("env", BIN, "-l")
+	c := exec.Command("/usr/bin/env", fmt.Sprintf(`PATH=%s %s`, REMOTE_PATH), BIN, "-l")
 	return c
 }
 
