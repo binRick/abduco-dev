@@ -4,9 +4,8 @@ import "fmt"
 
 var BIN = `sb`
 var (
-	SRC_SB_PATH  = `./../../abducoctl/files/sb-%s`
-	_DST_SB_PATH = `/usr/local/bin/sb-linux`
-	DST_SB_PATH  = `/root/.bin/sb`
+	SRC_SB_PATH = `./../../abducoctl/files/sb-%s`
+	DST_SB_PATH = `/root/.bin/sb`
 )
 
 func DestPath(rh RemoteHost) string {
@@ -27,11 +26,4 @@ func DestPath(rh RemoteHost) string {
 
 func SourcePath(rh RemoteHost) string {
 	return fmt.Sprintf(SRC_SB_PATH, rh.OS)
-}
-
-func init() {
-	//	p, _ := Expand(SRC_SB_PATH)
-	//	SRC_SB_PATH = p
-	//	p, _ = Expand(DST_SB_PATH)
-	//	DST_SB_PATH = p
 }
