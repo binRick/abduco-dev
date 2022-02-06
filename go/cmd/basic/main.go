@@ -3,12 +3,19 @@ package main
 import (
 	"fmt"
 	"os"
+	"time"
 
 	abducoctl "github.com/binRick/abduco-dev/go/abducoctl"
 )
 
 var (
 	session_name string
+	f36          = abducoctl.RemoteHost{
+		User:    `root`,
+		Host:    `127.0.0.1`,
+		Port:    49117,
+		Timeout: (time.Millisecond * 1000),
+	}
 )
 
 func main() {
@@ -16,6 +23,9 @@ func main() {
 		switch os.Args[1] {
 		case "k":
 			Keys()
+		case "ssh":
+			stdout := abducoctl.SSH(f36, `abduco-sb -l`)
+			fmt.Println(stdout)
 		case "dev":
 			Dev()
 		case "b":
