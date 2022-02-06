@@ -67,6 +67,10 @@ func get_ssh_client_config() *ssh.ClientConfig {
 	}
 }
 
+func Connect(host string, port uint) {
+
+}
+
 func Pty() {
 	server = fmt.Sprintf(`%s:%s`, server, port)
 	config := get_ssh_client_config()
