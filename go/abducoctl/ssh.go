@@ -14,6 +14,10 @@ import (
 	"golang.org/x/crypto/ssh"
 )
 
+var (
+	REMOTE_PATH = `~/.bin:/usr/local/bin:/usr/bin:/bin:/usr/local/sbin:/usr/sbin:/sbin`
+)
+
 type RemoteHost struct {
 	Host     string
 	Hostname string
@@ -92,6 +96,10 @@ func (rh *RemoteHost) ParseList(lines string) {
 	}
 }
 
+func NewRemoteCommand(cmd string) string {
+	return fmt.Sprintf(`/usr/bin/env PATH=%s %s`, REMOTE_PATH, cmd)
+}
+
 func SSH(rh RemoteHost, cmd string) string {
 	auth, err := goph.UseAgent()
 	if err != nil {
@@ -111,7 +119,7 @@ func SSH(rh RemoteHost, cmd string) string {
 	defer client.Close()
 	ctx, cancel := context.WithTimeout(ctx, rh.Timeout)
 	defer cancel()
-	out, err := client.RunContext(ctx, fmt.Sprintf(`/usr/bin/env PATH=/usr/local/bin:/usr/bin:/bin:/usr/local/sbin:/usr/sbin:/sbin %s`, cmd))
+	out, err := client.RunContext(ctx, NewRemoteCommand(cmd))
 	if err != nil {
 		log.Fatal(err)
 	}

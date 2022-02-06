@@ -45,8 +45,8 @@ func main() {
 				host.ParseList(stdout)
 				pp.Println(host)
 			}
-		case "lh":
-			abducoctl.ListHosts(hosts)
+		case "remote":
+			abducoctl.ListRemoteHostSessions(hosts)
 		case "dev":
 			Dev()
 		case "b":

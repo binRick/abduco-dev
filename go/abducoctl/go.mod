@@ -36,6 +36,7 @@ require (
 	github.com/pkg/sftp v1.13.4 // indirect
 	github.com/rivo/uniseg v0.2.0 // indirect
 	github.com/stretchr/testify v1.7.0 // indirect
+	github.com/wayneashleyberry/terminal-dimensions v1.1.0 // indirect
 	golang.org/x/crypto v0.0.0-20210921155107-089bfa567519 // indirect
 	golang.org/x/sys v0.0.0-20220204135822-1c1b9b1eba6a // indirect
 	golang.org/x/text v0.3.6 // indirect
