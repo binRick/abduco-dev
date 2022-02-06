@@ -11,11 +11,25 @@ import (
 
 var (
 	session_name string
-	f36          = abducoctl.RemoteHost{
-		User:    `root`,
-		Host:    `127.0.0.1`,
-		Port:    22,
-		Timeout: (time.Millisecond * 1000),
+	hosts        = map[string]abducoctl.RemoteHost{
+		`localhost`: abducoctl.RemoteHost{
+			User:    `rick`,
+			Host:    `127.0.0.1`,
+			Port:    22,
+			Timeout: (time.Millisecond * 1000),
+		},
+		`al1`: abducoctl.RemoteHost{
+			User:    `root`,
+			Host:    `127.0.0.1`,
+			Port:    45888,
+			Timeout: (time.Millisecond * 1000),
+		},
+		`f36`: abducoctl.RemoteHost{
+			User:    `root`,
+			Host:    `127.0.0.1`,
+			Port:    49117,
+			Timeout: (time.Millisecond * 1000),
+		},
 	}
 )
 
@@ -25,10 +39,14 @@ func main() {
 		case "k":
 			Keys()
 		case "ssh":
-			stdout := abducoctl.SSH(f36, `abduco-sb -l`)
-			f36.ParseList(stdout)
-			pp.Println(f36)
-			//			fmt.Println(stdout)
+			if len(os.Args) > 2 {
+				host := hosts[os.Args[2]]
+				stdout := abducoctl.SSH(host, fmt.Sprintf(`%s -l`, abducoctl.ABDUCO_BINARY_NAME))
+				host.ParseList(stdout)
+				pp.Println(host)
+			}
+		case "lh":
+			abducoctl.ListHosts(hosts)
 		case "dev":
 			Dev()
 		case "b":
