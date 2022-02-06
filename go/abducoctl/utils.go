@@ -73,7 +73,7 @@ func NewNameString() string {
 }
 
 func Path() string {
-	p, err := exec.LookPath(ABDUCO_BINARY_NAME)
+	p, err := exec.LookPath(BIN)
 	if err != nil {
 		panic(err)
 	}
@@ -114,7 +114,7 @@ func GetPids() ([]int, error) {
 }
 
 func get_cmd() *exec.Cmd {
-	c := exec.Command("env", ABDUCO_BINARY_NAME, "-l")
+	c := exec.Command("env", BIN, "-l")
 	return c
 }
 

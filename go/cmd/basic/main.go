@@ -12,12 +12,13 @@ import (
 var (
 	session_name string
 	hosts        = map[string]abducoctl.RemoteHost{
-		`localhost`: abducoctl.RemoteHost{
+		`mac`: abducoctl.RemoteHost{
 			User:    `rick`,
 			Host:    `127.0.0.1`,
 			Name:    `mac`,
 			Port:    22,
 			Timeout: (time.Millisecond * 1000),
+			OS:      `darwin`,
 		},
 		`al1`: abducoctl.RemoteHost{
 			Name:    `al1`,
@@ -25,6 +26,7 @@ var (
 			Host:    `127.0.0.1`,
 			Port:    45888,
 			Timeout: (time.Millisecond * 1000),
+			OS:      `linux`,
 		},
 		`f36`: abducoctl.RemoteHost{
 			Name:    `f36`,
@@ -32,6 +34,7 @@ var (
 			Host:    `127.0.0.1`,
 			Port:    49117,
 			Timeout: (time.Millisecond * 1000),
+			OS:      `linux`,
 		},
 	}
 )
@@ -49,7 +52,7 @@ func main() {
 		case "ssh":
 			if len(os.Args) > 2 {
 				host := hosts[os.Args[2]]
-				stdout := abducoctl.SSH(host, fmt.Sprintf(`%s -l`, abducoctl.ABDUCO_BINARY_NAME))
+				stdout := abducoctl.SSH(host, fmt.Sprintf(`%s -l`, abducoctl.DST_SB_PATH))
 				host.ParseList(stdout)
 				pp.Println(host)
 			}
@@ -58,9 +61,7 @@ func main() {
 				host := hosts[os.Args[2]]
 				abducoctl.ListRemoteHostSessions(host)
 			}
-		case "dev":
-			Dev()
-		case "b":
+		case "buffer":
 			if len(os.Args) > 2 {
 				lines := abducoctl.Buffer(os.Args[2])
 				for _, l := range lines {

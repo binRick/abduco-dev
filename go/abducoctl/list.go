@@ -12,7 +12,7 @@ import (
 func ListRemoteHostSessions(host RemoteHost) {
 	s := time.Now()
 	session_names := []string{}
-	host.ParseList(SSH(host, fmt.Sprintf(`%s -l`, ABDUCO_BINARY_NAME)))
+	host.ParseList(SSH(host, fmt.Sprintf(`%s -l`, DestPath(host))))
 	for _, S := range host.Sessions {
 		session_names = append(session_names, S.Session)
 	}

@@ -28,6 +28,7 @@ type RemoteHost struct {
 	User     string
 	Timeout  time.Duration
 	Sessions []AbducoSession
+	OS       string
 }
 
 func (rh *RemoteHost) ParseList(lines string) {
@@ -144,7 +145,7 @@ func SftpPutFileContent(rh RemoteHost, f string, content []byte) {
 }
 
 func UploadSB(rh RemoteHost) {
-	SftpPutFile(rh, SRC_SB_PATH, DST_SB_PATH, 0700)
+	SftpPutFile(rh, SourcePath(rh), DestPath(rh), 0700)
 }
 
 func SftpPutFile(rh RemoteHost, local_file, remote_file string, mode os.FileMode) {
