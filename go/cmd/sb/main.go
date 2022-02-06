@@ -12,6 +12,14 @@ import (
 var (
 	session_name string
 	hosts        = map[string]abducoctl.RemoteHost{
+		`localhost`: abducoctl.RemoteHost{
+			User:    `root`,
+			Host:    `127.0.0.1`,
+			Name:    `localhost`,
+			Port:    22,
+			Timeout: (time.Millisecond * 1000),
+			OS:      `linux`,
+		},
 		`mac`: abducoctl.RemoteHost{
 			User:    `rick`,
 			Host:    `127.0.0.1`,
